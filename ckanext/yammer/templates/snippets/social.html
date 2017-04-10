@@ -1,0 +1,31 @@
+{% set current_url = h.full_current_url() %}
+{%  set pkg_title = c.pkg_dict.title %}
+{%  set pkg_notes = c.pkg_dict.notes %}
+
+{% block social %}
+  <section class="module module-narrow social">
+    {% block social_title %}
+      <h2 class="module-heading"><i class="icon-medium icon-share"></i> {{ _('Social') }}</h2>
+    {% endblock %}
+    {% block social_nav %}
+      <ul class="nav nav-simple">
+        <li class="nav-item"><a href="mailto:?Subject={{ pkg_title }}&body=Title:%20{{ pkg_title }}%0D%0A%0D%0AURL:%20%20{{ current_url }}%0D%0A%0D%0ANotes:%20{{ pkg_notes }}" target="_blank"><i class="fa fa-envelope" aria-hidden="true"> </i> Send Mail</a></li>
+        <li class="nav-item"><a class="yammer" id="yj-share-button" href="#"><i class="fa fa-bullhorn" aria-hidden="true">
+
+        </i> Yammer</a></li>
+
+      </ul>
+    {% endblock %}
+  </section>
+
+<script type="text/javascript" src="https://s0.assets-yammer.com/assets/platform_social_buttons.min.js"></script>
+<script type="text/javascript">
+  var options = {
+    customButton : true, //false by default. Pass true if you are providing your own button to trigger the share popup
+    classSelector: 'yammer',//if customButton is true, you must pass the css class name of your button (so we can bind the click event for you)
+    defaultMessage: 'Look whats in the Data Asset FrontDoor', //optionally pass a message to prepopulate your post
+    pageUrl: '{{  current_url }}' //current browser url is used by default. You can pass your own url if you want to generate the OG object from a different URL.
+  };
+  yam.platform.yammerShare(options);
+</script>
+{% endblock %}
