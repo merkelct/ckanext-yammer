@@ -19,6 +19,21 @@
           document.getElementById('yammer-login').innerHTML = 'Welcome to Yammer!';
         }
       });
+
+      yam.getLoginStatus(
+  function(response) {
+    if (response.authResponse) {
+      alert("logged in");
+        console.dir(response); //print user information to the console
+      }
+    else {
+      //authResponse = false if the user is not logged in, or is logged in but hasn't authorized your app yet
+      alert("logged out");
+    }
+  }
+);
+
+
     </script>
 
     {{ form.input('ckanext.yammer.token', id='field-ckanext.yammer.token', label=_('Yammer Token') )}}
