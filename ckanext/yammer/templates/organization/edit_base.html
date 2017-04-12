@@ -1,0 +1,10 @@
+{% ckan_extends %}
+{% set organization = c.group_dict %}
+
+
+{% block content_primary_nav %}
+ {{ super() }}
+
+  {{ h.build_nav_icon('ckanext_yammer_config', _('Yammer'), id=c.group_dict.name) }}
+
+{% endblock %}

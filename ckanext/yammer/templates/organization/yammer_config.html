@@ -1,0 +1,25 @@
+{% extends "organization/edit_base.html" %}
+
+{% import 'macros/form.html' as form %}
+
+{% block subtitle %}{{ _('Yammer Coinfiguration') }} - {{ super() }}{% endblock %}
+
+{% block primary_content_inner %}
+
+{% block yammer_configuration %}
+
+    <h3>Yammer configuration options </h3>
+
+    {{ form.input('ckanext.yammer.token', id='field-ckanext.yammer.token', label=_('Yammer Token') )}}
+    {{ form.input('ckanext.yammer.groups', id='field-ckanext.yammer.groups', label=_('Yammer groups') )}}
+    {{ form.checkbox('Create', checked=false) }}
+    {{ form.checkbox('Update', checked=false) }}
+    {{ form.checkbox('Delete', checked=false) }}
+
+
+
+
+{% endblock %}
+
+{% endblock %}
+

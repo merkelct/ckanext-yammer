@@ -2,13 +2,20 @@ import yampy
 import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
+import ckan.lib.base as base
 from pylons import app_globals
+from routes.mapper import SubMapper
+
+group_type = u'grup'
+group_type_utf8 = group_type.encode('utf8')
 
 
-
-class YammerPlugin(plugins.SingletonPlugin):
+class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
+    plugins.implements(plugins.IGroupForm, inherit=False)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IMapper)
+    plugins.implements(plugins.IRoutes, inherit=True)
+
 
     # IConfigurer
     def update_config(self, config):
@@ -46,6 +53,23 @@ class YammerPlugin(plugins.SingletonPlugin):
         pass
 
 
+    # IGroupForm
 
+    def group_types(self):
+        return (group_type,)
 
+    def is_fallback(self):
+        False
 
+    def group_controller(self):
+        return 'organization'
+
+    # IRoutes
+
+    def before_map(self, map):
+        controller = 'ckanext.yammer.controller:YammerController'
+        with SubMapper(map, controller=controller) as m:
+            m.connect('ckanext_yammer_config',
+                      '/organization/yammer_config/{id}',
+                      action='yammer_config', ckan_icon='bullhorn', id='{id}')
+        return map
