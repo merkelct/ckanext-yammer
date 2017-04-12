@@ -20,6 +20,8 @@
             document.getElementById('yammer-login').innerHTML = 'You are authenticated to Yammer!';
             document.getElementById('field-ckanext.yammer.token').value = resp.access_token.token;
 
+
+
         }
         else {
             //authResponse = false if the user is not logged in, or is logged in but hasn't authorized your app yet
@@ -28,14 +30,47 @@
         }
     });
 
+    yam.getLoginStatus(
+        function (response) {
+            if (response.authResponse) {
+                console.log("logged in");
+                yam.platform.request({
+                    url: "users/current.json",
+                    method: "GET",
+                    data: {
+                        "include_group_memberships": "true"
+
+                    },
+                    success: function (user) { //print message response information to the console
+                        grp_select = [] //[{'name':2010, 'value': 2010},{'name': 2011, 'value': 2011}]
+                        select = document.getElementById('field-ckanext.yammer.groups')
+                        for (grp in user.group_memberships){
+                            var opt = document.createElement('option');
+                            opt.value =user.group_memberships[grp].id;
+                            opt.innerHTML = user.group_memberships[grp].name;
+                            select.appendChild(opt)
+
+                            }
+                       console.dir(user);
+                    },
+                    error: function (user) {
+                        alert("There was an error with the request.");
+                    }
+                })
+            }
+            else {
+                alert("not logged in")
+            }
+        }
+    );
+
     </script>
 
     {{ form.input('ckanext.yammer.token', id='field-ckanext.yammer.token', label=_('Yammer Token') )}}
-    {{ form.input('ckanext.yammer.groups', id='field-ckanext.yammer.groups', label=_('Yammer groups') )}}
+    {{ form.select('ygroups', label=_('Yammer Groups'), options="", selected=None, error="", id='field-ckanext.yammer.groups') }}
     {{ form.checkbox('Create', checked=false) }}
     {{ form.checkbox('Update', checked=false) }}
     {{ form.checkbox('Delete', checked=false) }}
-
 
 
 
