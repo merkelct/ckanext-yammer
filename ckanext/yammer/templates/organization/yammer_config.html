@@ -10,6 +10,17 @@
 
     <h3>Yammer configuration options </h3>
 
+    <script type="text/javascript" data-app-id="0G229UnVdvDo85oMSxBQ" src="https://c64.assets-yammer.com/assets/platform_js_sdk.js"></script>
+
+    <span id="yammer-login"></span>
+    <script>
+      yam.connect.loginButton('#yammer-login', function (resp) {
+        if (resp.authResponse) {
+          document.getElementById('yammer-login').innerHTML = 'Welcome to Yammer!';
+        }
+      });
+    </script>
+
     {{ form.input('ckanext.yammer.token', id='field-ckanext.yammer.token', label=_('Yammer Token') )}}
     {{ form.input('ckanext.yammer.groups', id='field-ckanext.yammer.groups', label=_('Yammer groups') )}}
     {{ form.checkbox('Create', checked=false) }}
