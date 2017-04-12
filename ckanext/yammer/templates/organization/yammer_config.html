@@ -14,25 +14,19 @@
 
     <span id="yammer-login"></span>
     <script>
-      yam.connect.loginButton('#yammer-login', function (resp) {
+    //add the yammer login button to the manage orgs page
+    yam.connect.loginButton('#yammer-login', function (resp) {
         if (resp.authResponse) {
-          document.getElementById('yammer-login').innerHTML = 'Welcome to Yammer!';
+            document.getElementById('yammer-login').innerHTML = 'You are authenticated to Yammer!';
+            document.getElementById('field-ckanext.yammer.token').value = resp.access_token.token;
+
         }
-      });
-
-      yam.getLoginStatus(
-  function(response) {
-    if (response.authResponse) {
-      alert("logged in");
-        console.dir(response); //print user information to the console
-      }
-    else {
-      //authResponse = false if the user is not logged in, or is logged in but hasn't authorized your app yet
-      alert("logged out");
-    }
-  }
-);
-
+        else {
+            //authResponse = false if the user is not logged in, or is logged in but hasn't authorized your app yet
+            alert("You are not logged into yammer and we cannot get an access token for Organization posting to " +
+                "Yammer groups. If there is not one in the Yammer token file you must re-authenticate to get a new one and save");
+        }
+    });
 
     </script>
 
