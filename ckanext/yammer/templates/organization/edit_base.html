@@ -6,7 +6,7 @@
  {{ super() }}
 
 
-  {% if organization and h.check_access('organization_update', {'id': organization.id}) %}
+  {% if organization and h.check_access('organization_update', {'id': c.id}) %}
 
     {{ h.build_nav_icon('ckanext_yammer_config', _('Yammer'), id=c.group_dict.name) }}
   {% endif %}

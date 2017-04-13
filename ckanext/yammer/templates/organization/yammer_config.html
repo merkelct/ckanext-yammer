@@ -1,4 +1,6 @@
 {% extends "organization/edit_base.html" %}
+{% set action_url = h.url_for('') %}
+{% set cancel_url = h.url_for('') %}
 
 {% import 'macros/form.html' as form %}
 
@@ -65,6 +67,7 @@
     );
 
     </script>
+<form class="form-vertical" method="post" action="{{ action_url }}" data-module="basic-form">
 
     {{ form.input('ckanext.yammer.token', id='field-ckanext.yammer.token', label=_('Yammer Token'), is_required=true )}}
    <div class="control-group control-select">
@@ -77,12 +80,17 @@
     </select>
     </div>
   </div>
-    <label class="control-label" for="field-ckanext.yammer.actions">Actions to publish</label>
+
+    <label class="control-label" for="field-ckanext.yammer.actions">Actions</label>
     {{ form.checkbox('Create', checked=false) }}
     {{ form.checkbox('Update', checked=false) }}
     {{ form.checkbox('Delete', checked=false) }}
+    <div class="form-actions">
 
-
+        <a class="btn pull-left" href="{{ cancel_url }}">{{ _('Cancel') }}</a>
+        <button class="btn btn-primary" name="save" value="save" type="submit">{{ _('Update Config') }}</button>
+    </div>
+</form>
 {% else %}
 
 <p>You are not Authorized to update this content</p>
