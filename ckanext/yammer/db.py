@@ -44,8 +44,9 @@ def init_db(model):
     try:
         #print(sql)
         conn.execute(sql)
-    except sa.exc.ProgrammingError as e:
-        print(e)
+    except sa.exc.ProgrammingError:
+        pass
+
     model.Session.commit()
 
     sql_upgrade_01 = (

@@ -1,6 +1,9 @@
 # encoding: utf-8
 import ckan.lib.base as base
 import ckan.model as model
+import ckan.plugins as p
+import ckan.lib.helpers as h
+
 from ckan.common import c, request
 from ckan.logic import get_action
 
@@ -24,7 +27,15 @@ class YammerController(base.BaseController):
                    'parent': request.params.get('parent', None)
                    }
 
-        print context
+        #print context
+        if p.toolkit.request.method == 'POST':
+
+            #do a try catch here for sending the data objec to the DB after save
+            data = dict(p.toolkit.request.POST)
+            print data
+            h.flash_success(data, allow_html=True)
+
+
 
         data_dict = {'id': id, 'include_datasets': False}
         print data_dict
