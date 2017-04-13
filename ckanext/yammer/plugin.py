@@ -2,9 +2,11 @@ import yampy
 import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
+import db
 import ckan.lib.base as base
 from pylons import app_globals
 from routes.mapper import SubMapper
+
 
 group_type = u'grup'
 group_type_utf8 = group_type.encode('utf8')
@@ -30,6 +32,7 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
         p = package.Package().get(instance.id)
+        yammer_man  = db.Yammer_user.get()
 
         if p != None:
             access_token = ''

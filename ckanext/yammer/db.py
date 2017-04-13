@@ -20,26 +20,10 @@ def init_db(model):
     class _Yammer_user(model.DomainObject):
 
         @classmethod
-        def get(cls, **kw):
-            '''Finds a single entity in the register.'''
-            query = model.Session.query(cls).autoflush(False)
-            return query.filter_by(**kw).first()
-
-        # @classmethod
-        # def frontpage(cls, **kw):
-        #     '''Finds a single entity in the register.'''
-        #     order = kw.pop('order', False)
-        #     order_publish_date = kw.pop('order_publish_date', False)
-        #
-        #     query = model.Session.query(cls).autoflush(False)
-        #     query = query.filter_by(**kw)
-        #     if order:
-        #         query = query.order_by(cls.order).filter(cls.order != '')
-        #     elif order_publish_date:
-        #         query = query.order_by(cls.publish_date.desc()).filter(cls.publish_date != None)
-        #     else:
-        #         query = query.order_by(cls.created.desc())
-        #     return query.all()
+        def get(cls, yammer_user_reference):
+            query = query.filter(or_(cls.name == yammer_user_reference,
+                                     cls.id == yammer_user_reference))
+            return query.first()
 
     global Yammer_user
     Yammer_user = _Yammer_user
