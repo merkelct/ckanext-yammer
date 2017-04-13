@@ -33,7 +33,7 @@
     yam.getLoginStatus(
         function (response) {
             if (response.authResponse) {
-                console.log("logged in");
+                //console.log("logged in");
                 yam.platform.request({
                     url: "users/current.json",
                     method: "GET",
@@ -42,7 +42,6 @@
 
                     },
                     success: function (user) { //print message response information to the console
-                        grp_select = [] //[{'name':2010, 'value': 2010},{'name': 2011, 'value': 2011}]
                         select = document.getElementById('field-ckanext.yammer.groups')
                         for (grp in user.group_memberships){
                             var opt = document.createElement('option');
@@ -51,7 +50,7 @@
                             select.appendChild(opt)
 
                             }
-                       console.dir(user);
+                      // console.dir(user);
                     },
                     error: function (user) {
                         alert("There was an error with the request.");
@@ -59,7 +58,7 @@
                 })
             }
             else {
-                alert("not logged in")
+                alert("not logged into Yammer")
             }
         }
     );
@@ -67,11 +66,17 @@
     </script>
 
     {{ form.input('ckanext.yammer.token', id='field-ckanext.yammer.token', label=_('Yammer Token') )}}
-    {{ form.select('ygroups', label=_('Yammer Groups'), options="", selected=None, error="", id='field-ckanext.yammer.groups') }}
+   <div class="control-group control-select">
+    <label class="control-label" for="field-ckanext.yammer.groups">Yammer Groups</label>
+    <div class="controls ">
+    <select id="field-ckanext.yammer.groups" name="ygroups" multiple size="15">
+    </select>
+    </div>
+  </div>
+    <label class="control-label" for="field-ckanext.yammer.actions">Actions to publish</label>
     {{ form.checkbox('Create', checked=false) }}
     {{ form.checkbox('Update', checked=false) }}
     {{ form.checkbox('Delete', checked=false) }}
-
 
 
 {% endblock %}
