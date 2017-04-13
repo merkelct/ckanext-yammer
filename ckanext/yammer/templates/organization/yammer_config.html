@@ -7,6 +7,7 @@
 {% block primary_content_inner %}
 
 {% block yammer_configuration %}
+{% if organization and h.check_access('organization_update', {'id': c.id}) %}
 
     <h3>Yammer configuration options </h3>
 
@@ -82,7 +83,12 @@
     {{ form.checkbox('Delete', checked=false) }}
 
 
-{% endblock %}
+{% else %}
+
+<p>You are not Authorized to update this content</p>
+
+{%  endif %}
+    {% endblock %}
 
 {% endblock %}
 

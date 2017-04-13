@@ -5,6 +5,9 @@
 {% block content_primary_nav %}
  {{ super() }}
 
-  {{ h.build_nav_icon('ckanext_yammer_config', _('Yammer'), id=c.group_dict.name) }}
 
+  {% if organization and h.check_access('organization_update', {'id': organization.id}) %}
+
+    {{ h.build_nav_icon('ckanext_yammer_config', _('Yammer'), id=c.group_dict.name) }}
+  {% endif %}
 {% endblock %}
