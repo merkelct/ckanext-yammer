@@ -33,4 +33,15 @@ class Yammer_user(domain_object.DomainObject):
         return query.first()
 
 
+    @classmethod
+    def update(cls, yammer_user_reference):
+        pg_row = {
+            'name': yammer_user_reference['name'],
+            'token': yammer_user_reference['token'],
+            'groups': yammer_user_reference['groups'],
+            'create_dataset': yammer_user_reference['create_dataset'],
+            'update_dataset': yammer_user_reference['update_dataset'],
+            'delete_dataset': yammer_user_reference['delete_dataset']
+        }
+
 meta.mapper(Yammer_user, yammer_user_table)

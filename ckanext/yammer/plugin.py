@@ -3,8 +3,6 @@ import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckanext.yammer.model.yammer_user as yammer_user
-import ckan.lib.base as base
-import ckan.lib.app_globals as app_globals
 from pylons import app_globals
 from routes.mapper import SubMapper
 from ckan.common import c
@@ -99,3 +97,6 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
                       '/organization/yammer_config/{id}',
                       action='yammer_config', ckan_icon='bullhorn', id='{id}')
         return map
+
+    def yammer_user_create(self, something):
+        print("this is called")
