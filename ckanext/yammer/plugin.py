@@ -2,15 +2,16 @@ import yampy
 import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
-import db
+import ckanext.yammer.model.yammer_user as yammer_user
 import ckan.lib.base as base
+import ckan.lib.app_globals as app_globals
 from pylons import app_globals
 from routes.mapper import SubMapper
+from ckan.common import c
 
 
 group_type = u'grup'
 group_type_utf8 = group_type.encode('utf8')
-
 
 class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     plugins.implements(plugins.IGroupForm, inherit=False)
@@ -18,6 +19,29 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     plugins.implements(plugins.IMapper)
     plugins.implements(plugins.IRoutes, inherit=True)
 
+    def get_edit_type(self):
+        yammer_poster = yammer_user.Yammer_user().get(c.user)
+        types = []
+        if yammer_poster.create_dataset == True:
+            types.append('create')
+        if yammer_poster.update_dataset == True:
+            types.append('update')
+        if yammer_poster.delete_dataset == True:
+            types.append('delete')
+
+        return types
+
+
+    def yammer_post(self, edit_type, p):
+        yammer_poster = yammer_user.Yammer_user().get(c.user)
+        access_token = yammer_poster.token
+        groups = yammer_poster.groups
+        url = app_globals.site_url + toolkit.url_for(controller='package', action='read', id=p.name)
+        yammer = yampy.Yammer(access_token=access_token)
+        for group_id in groups:
+            yammer.messages.create('The {} Dataset has been {}, check it out here: {}'.format(p.name, edit_type, url),
+                                    group_id=group_id,
+                                    topics=['Dataset', edit_type])
 
     # IConfigurer
     def update_config(self, config):
@@ -32,28 +56,27 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
         p = package.Package().get(instance.id)
-        yammer_man  = db.Yammer_user.get()
-
-        if p != None:
-            access_token = ''
-            group_id = 0
-            url = app_globals.site_url + toolkit.url_for(controller = 'package', action = 'read', id = p.name)
-            yammer = yampy.Yammer(access_token = access_token)
-            yammer.messages.create('The {} Dataset has been updated, check it out here: {}'.format(p.name, url),
-                                   group_id=group_id,
-                                   topics=['Dataset', 'Update'])
+        edits = self.get_edit_type()
+        if p != None and 'update' in edits:
+            self.yammer_post('updated', p)
 
     def before_insert(self, mapper, connection, instance):
         pass
 
     def after_insert(self, mapper, connection, instance):
-        pass
+        p = package.Package().get(instance.id)
+        edits = self.get_edit_type()
+        if p != None and 'create' in edits:
+            self.yammer_post('created', p)
 
     def before_delete(self, mapper, connection, instance):
         pass
 
     def after_delete(self, mapper, connection, instance):
-        pass
+        p = package.Package().get(instance.id)
+        edits = self.get_edit_type()
+        if p != None and 'delete' in edits:
+            self.yammer_post('deleted', p)
 
 
     # IGroupForm
