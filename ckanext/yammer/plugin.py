@@ -8,9 +8,9 @@ from routes.mapper import SubMapper
 from ckan.common import c
 
 
-def yammer_config(user_name):
+def yammer_config(id):
 
-    yammer_config_options = yammer_user.Yammer_user().get(user_name)
+    yammer_config_options = yammer_user.Yammer_user().get(id)
     return yammer_config_options
 
 group_type = u'grup'
@@ -28,7 +28,7 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         return {'yammer_config': yammer_config}
 
     def get_edit_type(self):
-        yammer_poster = yammer_user.Yammer_user().get(c.user)
+        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + c.group_dict.name)
         types = []
         if yammer_poster.create_dataset == True:
             types.append('create')

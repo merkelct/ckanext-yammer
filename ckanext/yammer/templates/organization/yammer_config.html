@@ -14,7 +14,7 @@
 
 {% block yammer_configuration %}
 {% if organization and h.check_access('organization_update', {'id': c.id}) %}
-{{ h.yammer_config(user.name) }}
+{{ h.yammer_config(user.id + "." + org.name) }}
     <h3>Yammer configuration options </h3>
 
     <script type="text/javascript" data-app-id="0G229UnVdvDo85oMSxBQ" src="https://c64.assets-yammer.com/assets/platform_js_sdk.js"></script>

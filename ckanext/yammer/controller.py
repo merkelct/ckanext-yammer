@@ -50,7 +50,7 @@ class YammerController(base.BaseController):
                 delete_dataset = True
             else:
                 delete_dataset = False
-            yammer_poster = {'id': data['user_id'],
+            yammer_poster = {'id': data['user_id'] + "." + data['organization'],
                              'name': data['user_name'],
                              'token': data['ckanext.yammer.token'],
                              'groups': data['ygroups'],
