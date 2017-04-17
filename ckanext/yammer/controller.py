@@ -39,12 +39,26 @@ class YammerController(base.BaseController):
 
             #the values for create, update, and delete values need to be passed into
             # the data variable, they are hard coded for now
-            yammer_poster = {'name': 'admin',
+            if 'Create' in data and data['Create'] == 'True':
+                create_dataset = True
+            else:
+                create_dataset = False
+            if 'Update' in data and data['Update'] == 'True':
+                update_dataset = True
+            else:
+                update_dataset = False
+            if 'Delete' in data and data['Delete'] == 'True':
+                delete_dataset = True
+            else:
+                delete_dataset = False
+            yammer_poster = {'id': data['user_id'],
+                             'name': data['user_name'],
                              'token': data['ckanext.yammer.token'],
                              'groups': data['ygroups'],
-                             'create_dataset': False,
-                             'update_dataset': True,
-                             'delete_dataset': False}
+                             'create_dataset': create_dataset,
+                             'update_dataset': update_dataset,
+                             'delete_dataset': delete_dataset,
+                             'org': data['organization']}
             print(yammer_poster)
             actions.yammer_user_update(yammer_poster)
 

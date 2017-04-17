@@ -1,6 +1,10 @@
 {% extends "organization/edit_base.html" %}
 {% set action_url = h.url_for('') %}
 {% set cancel_url = h.url_for('') %}
+{% set user = c.userobj %}
+{% set org = c.group_dict %}
+
+
 
 {% import 'macros/form.html' as form %}
 
@@ -82,14 +86,18 @@
   </div>
 
     <label class="control-label" for="field-ckanext.yammer.actions">Actions</label>
-    {{ form.checkbox('Create', checked=false) }}
-    {{ form.checkbox('Update', checked=false) }}
-    {{ form.checkbox('Delete', checked=false) }}
+    {{ form.checkbox('Create', value=True, checked=false) }}
+    {{ form.checkbox('Update', value=True, checked=false) }}
+    {{ form.checkbox('Delete', value=True, checked=false) }}
     <div class="form-actions">
 
         <a class="btn pull-left" href="{{ cancel_url }}">{{ _('Cancel') }}</a>
         <button class="btn btn-primary" name="save" value="save" type="submit">{{ _('Update Config') }}</button>
     </div>
+  {{ form.hidden('organization', org.name) }}
+      {{ form.hidden('user_name', user.name) }}
+      {{ form.hidden('user_id', user.id) }}
+
 </form>
 {% else %}
 
