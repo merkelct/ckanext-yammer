@@ -16,6 +16,7 @@ yammer_user_table = Table('ckanext_yammer_user', model.meta.metadata,
          Column('name', types.UnicodeText, nullable=False),
          Column('token', types.UnicodeText),
          Column('groups', ARRAY(types.Integer)),
+         Column('org', types.UnicodeText),
          Column('create_dataset', types.Boolean),
          Column('update_dataset', types.Boolean),
          Column('delete_dataset', types.Boolean),
@@ -32,16 +33,5 @@ class Yammer_user(domain_object.DomainObject):
         query = query.filter(or_(cls.name == yammer_user_reference))
         return query.first()
 
-
-    @classmethod
-    def update(cls, yammer_user_reference):
-        pg_row = {
-            'name': yammer_user_reference['name'],
-            'token': yammer_user_reference['token'],
-            'groups': yammer_user_reference['groups'],
-            'create_dataset': yammer_user_reference['create_dataset'],
-            'update_dataset': yammer_user_reference['update_dataset'],
-            'delete_dataset': yammer_user_reference['delete_dataset']
-        }
 
 meta.mapper(Yammer_user, yammer_user_table)

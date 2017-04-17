@@ -55,10 +55,10 @@ class YammerController(base.BaseController):
                              'name': data['user_name'],
                              'token': data['ckanext.yammer.token'],
                              'groups': data['ygroups'],
+                             'org': data['organization'],
                              'create_dataset': create_dataset,
                              'update_dataset': update_dataset,
-                             'delete_dataset': delete_dataset,
-                             'org': data['organization']}
+                             'delete_dataset': delete_dataset}
             print(yammer_poster)
             actions.yammer_user_update(yammer_poster)
 

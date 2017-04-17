@@ -35,6 +35,7 @@ def init_db(model):
                     name text NOT NULL,
                     token text,
                     groups integer ARRAY,
+                    org text,
                     create_dataset boolean,
                     update_dataset boolean,
                     delete_dataset boolean
@@ -81,6 +82,7 @@ def init_db(model):
         sa.Column('name', types.UnicodeText, nullable=False),
         sa.Column('token', types.UnicodeText),
         sa.Column('groups', ARRAY(types.Integer)),
+        sa.Column('org', types.UnicodeText),
         sa.Column('create', types.Boolean),
         sa.Column('update', types.Boolean),
         sa.Column('delete', types.Boolean),
