@@ -12,7 +12,7 @@ def make_uuid():
     return unicode(uuid.uuid4())
 
 yammer_user_table = Table('ckanext_yammer_user', model.meta.metadata,
-         Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
+         Column('id', types.UnicodeText, primary_key=True),
          Column('name', types.UnicodeText, nullable=False),
          Column('token', types.UnicodeText),
          Column('groups', ARRAY(types.Integer)),
@@ -30,7 +30,7 @@ class Yammer_user(domain_object.DomainObject):
     @classmethod
     def get(cls, yammer_user_reference):
         query = meta.Session.query(cls).autoflush(False)
-        query = query.filter(or_(cls.name == yammer_user_reference))
+        query = query.filter(or_(cls.id == yammer_user_reference))
         return query.first()
 
 

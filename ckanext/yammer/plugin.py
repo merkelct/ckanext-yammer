@@ -1,11 +1,15 @@
 import yampy
+import pprint
 import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckanext.yammer.model.yammer_user as yammer_user
+import ckan.logic as logic
 from pylons import app_globals
 from routes.mapper import SubMapper
 from ckan.common import c
+from copy import deepcopy
+
 
 
 def yammer_config(id):
@@ -27,8 +31,9 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def get_helpers(self):
         return {'yammer_config': yammer_config}
 
-    def get_edit_type(self):
-        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + c.group_dict.name)
+    def get_edit_type(self, p):
+        print(p)
+        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
         if yammer_poster.create_dataset == True:
             types.append('create')
@@ -41,7 +46,7 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
 
 
     def yammer_post(self, edit_type, p):
-        yammer_poster = yammer_user.Yammer_user().get(c.user)
+        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         access_token = yammer_poster.token
         groups = yammer_poster.groups
         url = app_globals.site_url + toolkit.url_for(controller='package', action='read', id=p.name)
@@ -63,28 +68,31 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
 
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
-        p = package.Package().get(instance.id)
-        edits = self.get_edit_type()
-        if p != None and 'update' in edits:
-            self.yammer_post('updated', p)
+        p = deepcopy(package.Package().get(instance.id))
+        if p != None:
+            edits = self.get_edit_type(p)
+            if 'update' in edits:
+                self.yammer_post('updated', p)
 
     def before_insert(self, mapper, connection, instance):
         pass
 
     def after_insert(self, mapper, connection, instance):
-        p = package.Package().get(instance.id)
-        edits = self.get_edit_type()
-        if p != None and 'create' in edits:
-            self.yammer_post('created', p)
+        p = deepcopy(package.Package().get(instance.id))
+        if p != None:
+            edits = self.get_edit_type(p)
+            if 'create' in edits:
+                self.yammer_post('created', p)
 
     def before_delete(self, mapper, connection, instance):
         pass
 
     def after_delete(self, mapper, connection, instance):
-        p = package.Package().get(instance.id)
-        edits = self.get_edit_type()
-        if p != None and 'delete' in edits:
-            self.yammer_post('deleted', p)
+        p = deepcopy(package.Package().get(instance.id))
+        if p != None:
+            edits = self.get_edit_type(p)
+            if 'delete' in edits:
+                self.yammer_post('deleted', p)
 
 
     # IGroupForm

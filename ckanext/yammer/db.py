@@ -78,7 +78,7 @@ def init_db(model):
     types = sa.types
     global frontpage_table
     yammer_user_table = sa.Table('ckanext_yammer_user', model.meta.metadata,
-        sa.Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
+        sa.Column('id', types.UnicodeText, primary_key=True),
         sa.Column('name', types.UnicodeText, nullable=False),
         sa.Column('token', types.UnicodeText),
         sa.Column('groups', ARRAY(types.Integer)),

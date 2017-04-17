@@ -94,7 +94,7 @@
         <a class="btn pull-left" href="{{ cancel_url }}">{{ _('Cancel') }}</a>
         <button class="btn btn-primary" name="save" value="save" type="submit">{{ _('Update Config') }}</button>
     </div>
-  {{ form.hidden('organization', org.name) }}
+  {{ form.hidden('organization', org.id) }}
       {{ form.hidden('user_name', user.name) }}
       {{ form.hidden('user_id', user.id) }}
 
