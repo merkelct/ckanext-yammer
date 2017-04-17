@@ -10,8 +10,8 @@ from ckan.common import c
 
 def yammer_config(user_name):
 
-    yamer_config = yammer_user.Yammer_user().get(user_name)
-    return yamer_config
+    yammer_config_options = yammer_user.Yammer_user().get(user_name)
+    return yammer_config_options
 
 group_type = u'grup'
 group_type_utf8 = group_type.encode('utf8')

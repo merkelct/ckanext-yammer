@@ -83,9 +83,9 @@ def init_db(model):
         sa.Column('token', types.UnicodeText),
         sa.Column('groups', ARRAY(types.Integer)),
         sa.Column('org', types.UnicodeText),
-        sa.Column('create', types.Boolean),
-        sa.Column('update', types.Boolean),
-        sa.Column('delete', types.Boolean),
+        sa.Column('create_dataset', types.Boolean),
+        sa.Column('update_dataset', types.Boolean),
+        sa.Column('delete_dataset', types.Boolean),
         extend_existing=True
     )
 
