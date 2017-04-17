@@ -3,7 +3,7 @@
 {% set cancel_url = h.url_for('') %}
 {% set user = c.userobj %}
 {% set org = c.group_dict %}
-
+{% set form_info = h.yammer_config(user.id + "." + org.id) or {}%}
 
 
 {% import 'macros/form.html' as form %}
@@ -14,13 +14,12 @@
 
 {% block yammer_configuration %}
 {% if organization and h.check_access('organization_update', {'id': c.id}) %}
-{{ h.yammer_config(user.id + "." + org.name) }}
     <h3>Yammer configuration options </h3>
-
     <script type="text/javascript" data-app-id="0G229UnVdvDo85oMSxBQ" src="https://c64.assets-yammer.com/assets/platform_js_sdk.js"></script>
 
     <span id="yammer-login"></span>
     <script>
+    var form
     //add the yammer login button to the manage orgs page
     yam.connect.loginButton('#yammer-login', function (resp) {
         if (resp.authResponse) {
@@ -53,11 +52,14 @@
                         for (grp in user.group_memberships){
                             var opt = document.createElement('option');
                             opt.value =user.group_memberships[grp].id;
+                            opt.id = user.group_memberships[grp].id;
                             opt.innerHTML = user.group_memberships[grp].name;
                             select.appendChild(opt)
-
                             }
                       // console.dir(user);
+                {% if form_info != 'failure' %}
+                    formFill()
+                {%  endif %}
                     },
                     error: function (user) {
                         alert("There was an error with the request.");
@@ -69,7 +71,14 @@
             }
         }
     );
-
+    function formFill(){
+        form = {{ form_info|safe }}
+        document.getElementById('create_dataset').checked=form.create_dataset;
+        document.getElementById('update_dataset').checked=form.update_dataset;
+        document.getElementById('delete_dataset').checked=form.delete_dataset;
+        document.getElementById(form.groups["0"]).selected="selected";
+        console.log(form);
+    }
     </script>
 <form class="form-vertical" method="post" action="{{ action_url }}" data-module="basic-form">
 
@@ -86,9 +95,9 @@
   </div>
 
     <label class="control-label" for="field-ckanext.yammer.actions">Actions</label>
-    {{ form.checkbox('Create', value=True, checked=false) }}
-    {{ form.checkbox('Update', value=True, checked=false) }}
-    {{ form.checkbox('Delete', value=True, checked=false) }}
+    {{ form.checkbox('Create', value=True, checked=false, id='create_dataset') }}
+    {{ form.checkbox('Update', value=True, checked=false, id='update_dataset') }}
+    {{ form.checkbox('Delete', value=True, checked=false, id='delete_dataset') }}
     <div class="form-actions">
 
         <a class="btn pull-left" href="{{ cancel_url }}">{{ _('Cancel') }}</a>

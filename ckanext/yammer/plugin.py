@@ -1,5 +1,6 @@
 import yampy
-import pprint
+import db as db
+import json
 import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
@@ -9,13 +10,20 @@ from pylons import app_globals
 from routes.mapper import SubMapper
 from ckan.common import c
 from copy import deepcopy
-
+from sqlalchemy import exc
 
 
 def yammer_config(id):
 
-    yammer_config_options = yammer_user.Yammer_user().get(id)
-    return yammer_config_options
+    try:
+        context = {'for_view': True}
+        yammer_config_options = yammer_user.Yammer_user().get(id)
+        form = db.table_dictize(yammer_config_options, context)
+        jsonform = json.dumps(form)
+        print yammer_config_options
+        return str(jsonform)
+    except exc.SQLAlchemyError:
+        return 'failure'
 
 group_type = u'grup'
 group_type_utf8 = group_type.encode('utf8')
