@@ -33,8 +33,7 @@ class YammerController(base.BaseController):
 
             #do a try catch here for sending the data objec to the DB after save
             data = dict(p.toolkit.request.POST)
-            #print data
-            h.flash_success(data, allow_html=True)
+
             #call the action
 
             #the values for create, update, and delete values need to be passed into
@@ -59,14 +58,14 @@ class YammerController(base.BaseController):
                              'create_dataset': create_dataset,
                              'update_dataset': update_dataset,
                              'delete_dataset': delete_dataset}
-            print(yammer_poster)
-            actions.yammer_user_update(yammer_poster)
 
-
-
+            act = actions.yammer_user_update(yammer_poster)
+            if act == 'success':
+                h.flash_success("Your Yammer configuration has been saved", allow_html=True)
+            else:
+                h.flash_error('Contact your administrator there has been an error saving your Yammer configuration.')
 
         data_dict = {'id': id, 'include_datasets': False}
-        print data_dict
         c.group_dict = get_action('organization_show')(context, data_dict)
 
         return render('organization/yammer_config.html',

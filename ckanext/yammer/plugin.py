@@ -8,6 +8,11 @@ from routes.mapper import SubMapper
 from ckan.common import c
 
 
+def yammer_config(user_name):
+
+    yamer_config = yammer_user.Yammer_user().get(user_name)
+    return yamer_config
+
 group_type = u'grup'
 group_type_utf8 = group_type.encode('utf8')
 
@@ -16,6 +21,11 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IMapper)
     plugins.implements(plugins.IRoutes, inherit=True)
+    plugins.implements(plugins.ITemplateHelpers)
+
+    # Tell CKAN what custom template helper functions this plugin provides,
+    def get_helpers(self):
+        return {'yammer_config': yammer_config}
 
     def get_edit_type(self):
         yammer_poster = yammer_user.Yammer_user().get(c.user)
