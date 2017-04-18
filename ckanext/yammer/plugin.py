@@ -112,14 +112,9 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def after_insert(self, mapper, connection, instance):
         p = package.Package().get(instance.id)
         if p is not None:
-            #print(p)
             edits = self.get_edit_type(p)
-            print(edits)
             org = h.get_organization(org=p.owner_org)
             for action in edits:
-                print(action)
-                print(p.state)
-                print(p.private)
                 if action == 'create' and p.state != 'deleted' and p.private is not True:
                     print('posting to yammer')
                     self.yammer_post('created', p, org['display_name'])
