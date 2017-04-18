@@ -40,20 +40,15 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def get_edit_type(self, p):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
-        if yammer_poster.create_dataset == True:
-            types.append('create')
-        else:
-            types.append('false')
-        if yammer_poster.update_dataset == True:
-            types.append('update')
-        else:
-            types.append('false')
-        if yammer_poster.delete_dataset == True:
-            types.append('delete')
-        else:
-            types.append('false')
-        return types
 
+        if yammer_poster.create_dataset is not None and yammer_poster.create_dataset is True:
+            types.append('create')
+        if yammer_poster.update_dataset is not None and yammer_poster.update_dataset is True:
+            types.append('update')
+        if yammer_poster.delete_dataset is not None and yammer_poster.delete_dataset is True:
+            types.append('delete')
+
+        return types
 
     def yammer_post(self, edit_type, p):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
@@ -83,14 +78,17 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
         p = package.Package().get(instance.id)
+        edits = self.get_edit_type(p)
+
+        if edits == "['update']":
+            print('update')
+
         if p != None:
             edits = self.get_edit_type(p)
             if 'update' in edits and p.state != 'deleted' and p.state != 'draft':
                 self.yammer_post('updated', p)
             elif 'delete' in edits and p.state == 'deleted':
                 self.yammer_post('deleted', p)
-            else:
-                pass
 
     def before_insert(self, mapper, connection, instance):
         pass
@@ -101,8 +99,6 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
             edits = self.get_edit_type(p)
             if 'create' in edits:
                 self.yammer_post('created', p)
-            else:
-                pass
 
     def before_delete(self, mapper, connection, instance):
         pass
