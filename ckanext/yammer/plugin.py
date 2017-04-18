@@ -46,6 +46,7 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
                 'get_yammer_clientid': get_yammer_clientid }
 
     def get_edit_type(self, p):
+        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
 
         if p is not None:
@@ -68,7 +69,6 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         url = url_base + toolkit.url_for(controller='package', action='read', id=p.name)
         yammer = yampy.Yammer(access_token=access_token)
         for group_id in groups:
-            print(edit_type)
             if edit_type == 'deleted':
                 message = 'The {} dataset has been {} from {}'.format(p.name, edit_type,  org_name)
                 yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
@@ -94,8 +94,7 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
         p = package.Package().get(instance.id)
-        print(inspect(connection))
-        if p is not None:
+        if p != None:
             edits = self.get_edit_type(p)
             org = h.get_organization(org=p.owner_org)
             for action in edits:
