@@ -41,11 +41,11 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
 
-        if yammer_poster.create_dataset is not None and yammer_poster.create_dataset is True:
+        if yammer_poster is not None and yammer_poster.create_dataset is True:
             types.append('create')
-        if yammer_poster.update_dataset is not None and yammer_poster.update_dataset is True:
+        if yammer_poster is not None and yammer_poster.update_dataset is True:
             types.append('update')
-        if yammer_poster.delete_dataset is not None and yammer_poster.delete_dataset is True:
+        if yammer_poster is not None and yammer_poster.delete_dataset is True:
             types.append('delete')
 
         return types
