@@ -22,7 +22,7 @@ Make sure to add `yammerid` in your config file, using your yammer client id:
     "yammerid":"BJsO334heTOKEN4sDF"
 }
 ```
-
+The yammer client id can be found in the yammer web interface.
 
 ## Helper Functions
 
@@ -37,7 +37,7 @@ yammer_config(yammer_user_id) - returns the yammer configuration for the current
 all helpers will be available as h.<helper name>(<vars>)
 
 
-##Usage
+## Usage
 
 Before you can post to yammer, it must be configured at the org level.
 
