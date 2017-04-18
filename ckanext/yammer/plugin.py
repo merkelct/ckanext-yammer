@@ -5,11 +5,12 @@ import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckanext.yammer.model.yammer_user as yammer_user
-from pylons import app_globals
+from pylons import app_globals, config
 from routes.mapper import SubMapper
 from ckan.common import c
-from copy import deepcopy
-from sqlalchemy import exc
+from sqlalchemy import exc, inspect
+import ckan.lib.helpers as h
+
 
 def yammer_config(id):
 
@@ -26,6 +27,12 @@ def yammer_config(id):
 group_type = u'grup'
 group_type_utf8 = group_type.encode('utf8')
 
+
+def get_yammer_clientid():
+    id = config['ckan.yammer.id']
+    return id
+
+
 class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     plugins.implements(plugins.IGroupForm, inherit=False)
     plugins.implements(plugins.IConfigurer, inherit=True)
@@ -35,22 +42,25 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
 
     # Tell CKAN what custom template helper functions this plugin provides,
     def get_helpers(self):
-        return {'yammer_config': yammer_config}
+        return {'yammer_config': yammer_config,
+                'get_yammer_clientid': get_yammer_clientid }
 
     def get_edit_type(self, p):
-        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
-        if yammer_poster.create_dataset == True:
-            types.append('create')
-        if yammer_poster.update_dataset == True:
-            types.append('update')
-        if yammer_poster.delete_dataset == True:
-            types.append('delete')
+
+        if p is not None:
+            yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
+
+            if yammer_poster is not None and yammer_poster.create_dataset is True:
+                types.append('create')
+            if yammer_poster is not None and yammer_poster.update_dataset is True:
+                types.append('update')
+            if yammer_poster is not None and yammer_poster.delete_dataset is True:
+                types.append('delete')
 
         return types
 
-
-    def yammer_post(self, edit_type, p):
+    def yammer_post(self, edit_type, p, org_name):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         access_token = yammer_poster.token
         groups = yammer_poster.groups
@@ -58,12 +68,18 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         url = url_base + toolkit.url_for(controller='package', action='read', id=p.name)
         yammer = yampy.Yammer(access_token=access_token)
         for group_id in groups:
+            print(edit_type)
             if edit_type == 'deleted':
-                message = 'The {} dataset has been {}'.format(p.name, edit_type)
-            else:
-                message = 'The {} dataset has been {}, you can see the changes here: {}'.format(p.name, edit_type, url)
+                message = 'The {} dataset has been {} from {}'.format(p.name, edit_type,  org_name)
+                yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
+            elif edit_type == 'created':
+                message = 'The {} dataset has been {} for {}, you can see it here: {}'.format(p.name, edit_type, org_name,  url)
+                yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
+            elif edit_type == 'updated':
+                message = 'The {} dataset has been {} for {}, you can see the updates here: {}'.format(p.name, edit_type, org_name,  url)
+                yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
 
-            yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
+
 
     # IConfigurer
     def update_config(self, config):
@@ -78,22 +94,33 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
         p = package.Package().get(instance.id)
-        if p != None:
+        print(inspect(connection))
+        if p is not None:
             edits = self.get_edit_type(p)
-            if 'update' in edits and p.state != 'deleted' and p.state != 'draft':
-                self.yammer_post('updated', p)
-            elif 'delete' in edits and p.state == 'deleted':
-                self.yammer_post('deleted', p)
+            org = h.get_organization(org=p.owner_org)
+            for action in edits:
+                if action == 'update' and p.state != 'deleted' and p.state != 'draft' and p.private is not True:
+                    self.yammer_post('updated', p, org['display_name'])
+                elif action == 'delete' and p.state == 'deleted':
+                    self.yammer_post('deleted', p, org['display_name'])
+                else:
+                    pass
+
 
     def before_insert(self, mapper, connection, instance):
         pass
 
     def after_insert(self, mapper, connection, instance):
         p = package.Package().get(instance.id)
-        if p != None:
+        if p is not None:
             edits = self.get_edit_type(p)
-            if 'create' in edits:
-                self.yammer_post('created', p)
+            org = h.get_organization(org=p.owner_org)
+
+            for action in edits:
+                if action == 'create' and p.state != 'deleted' and p.state != 'draft' and p.private is not True:
+                    self.yammer_post('created', p, org['display_name'])
+                else:
+                    pass
 
     def before_delete(self, mapper, connection, instance):
         pass
