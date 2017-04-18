@@ -40,11 +40,11 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def get_edit_type(self, p):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
-        if yammer_poster.create_dataset == True:
+        if 'create_dataset' in yammer_poster and yammer_poster.create_dataset == True:
             types.append('create')
-        if yammer_poster.update_dataset == True:
+        if 'update_dataset' in yammer_poster and yammer_poster.update_dataset == True:
             types.append('update')
-        if yammer_poster.delete_dataset == True:
+        if 'delete_datset' in yammer_poster and yammer_poster.delete_dataset == True:
             types.append('delete')
 
         return types
