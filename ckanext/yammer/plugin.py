@@ -40,13 +40,18 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
     def get_edit_type(self, p):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
-        if 'create_dataset' in yammer_poster and yammer_poster.create_dataset == True:
+        if yammer_poster.create_dataset == True:
             types.append('create')
-        if 'update_dataset' in yammer_poster and yammer_poster.update_dataset == True:
+        else:
+            types.append('false')
+        if yammer_poster.update_dataset == True:
             types.append('update')
-        if 'delete_datset' in yammer_poster and yammer_poster.delete_dataset == True:
+        else:
+            types.append('false')
+        if yammer_poster.delete_dataset == True:
             types.append('delete')
-
+        else:
+            types.append('false')
         return types
 
 
@@ -84,6 +89,8 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
                 self.yammer_post('updated', p)
             elif 'delete' in edits and p.state == 'deleted':
                 self.yammer_post('deleted', p)
+            else:
+                pass
 
     def before_insert(self, mapper, connection, instance):
         pass
@@ -94,6 +101,8 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
             edits = self.get_edit_type(p)
             if 'create' in edits:
                 self.yammer_post('created', p)
+            else:
+                pass
 
     def before_delete(self, mapper, connection, instance):
         pass
