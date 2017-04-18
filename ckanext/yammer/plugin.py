@@ -38,8 +38,10 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         return {'yammer_config': yammer_config}
 
     def get_edit_type(self, p):
-        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         types = []
+
+        if p is not None:
+            yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
 
         if yammer_poster is not None and yammer_poster.create_dataset is True:
             types.append('create')
