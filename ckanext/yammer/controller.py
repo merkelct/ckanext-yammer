@@ -51,15 +51,19 @@ class YammerController(base.BaseController):
             else:
                 delete_dataset = False
 
-            print(data['organization'])
-            yammer_poster = {'id': data['user_id'] + "." + data['organization'],
-                             'name': data['user_name'],
-                             'token': data['ckanext.yammer.token'],
-                             'groups': data['ygroups'],
-                             'org': data['organization'],
-                             'create_dataset': create_dataset,
-                             'update_dataset': update_dataset,
-                             'delete_dataset': delete_dataset}
+            #print(data['organization'])
+
+            if 'ygroups' in data:
+                yammer_poster = {'id': data['user_id'] + "." + data['organization'],
+                                 'name': data['user_name'],
+                                 'token': data['ckanext.yammer.token'],
+                                 'groups': data['ygroups'],
+                                 'org': data['organization'],
+                                 'create_dataset': create_dataset,
+                                 'update_dataset': update_dataset,
+                                 'delete_dataset': delete_dataset}
+            else:
+                h.flash_error('Contact your administrator there has been an error saving your Yammer configuration.')
 
             act = actions.yammer_user_update(yammer_poster)
             if act == 'success':
