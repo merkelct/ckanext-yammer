@@ -1,11 +1,12 @@
 import yampy
 import db as db
 import json
+import ckan.lib.helpers as h
 import ckan.model.package as package
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckanext.yammer.model.yammer_user as yammer_user
-from pylons import app_globals, config
+from pylons import config
 from routes.mapper import SubMapper
 from ckan.common import c
 from sqlalchemy import exc, inspect
@@ -65,8 +66,8 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
         access_token = yammer_poster.token
         groups = yammer_poster.groups
-        url_base = app_globals.site_url[:len(app_globals.site_url)-10]
-        url = url_base + toolkit.url_for(controller='package', action='read', id=p.name)
+        url_base = h.get_site_protocol_and_host()
+        url = url_base[0] + '://' + url_base[1] + toolkit.url_for(controller='package', action='read', id=p.name)
         yammer = yampy.Yammer(access_token=access_token)
         for group_id in groups:
             if edit_type == 'deleted':
