@@ -47,9 +47,9 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
                 'get_yammer_clientid': get_yammer_clientid }
 
     def get_edit_type(self, p):
+        types = []
         if p.owner_org is not None:
             yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
-            types = []
 
             if p is not None:
                 yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
