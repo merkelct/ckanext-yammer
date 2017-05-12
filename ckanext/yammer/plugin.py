@@ -63,22 +63,23 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         return types
 
     def yammer_post(self, edit_type, p, org_name):
-        yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
-        access_token = yammer_poster.token
-        groups = yammer_poster.groups
-        url_base = h.get_site_protocol_and_host()
-        url = url_base[0] + '://' + url_base[1] + toolkit.url_for(controller='package', action='read', id=p.name)
-        yammer = yampy.Yammer(access_token=access_token)
-        for group_id in groups:
-            if edit_type == 'deleted':
-                message = 'The {} dataset has been {} from {}'.format(p.name, edit_type,  org_name)
-                yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
-            elif edit_type == 'created':
-                message = 'The {} dataset has been {} for {}, you can see it here: {}'.format(p.name, edit_type, org_name,  url)
-                yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
-            elif edit_type == 'updated':
-                message = 'The {} dataset has been {} for {}, you can see the updates here: {}'.format(p.name, edit_type, org_name,  url)
-                yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
+        if p.owner_org is not None:
+            yammer_poster = yammer_user.Yammer_user().get(c.userobj.id + "." + p.owner_org)
+            access_token = yammer_poster.token
+            groups = yammer_poster.groups
+            url_base = h.get_site_protocol_and_host()
+            url = url_base[0] + '://' + url_base[1] + toolkit.url_for(controller='package', action='read', id=p.name)
+            yammer = yampy.Yammer(access_token=access_token)
+            for group_id in groups:
+                if edit_type == 'deleted':
+                    message = 'The {} dataset has been {} from {}'.format(p.name, edit_type,  org_name)
+                    yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
+                elif edit_type == 'created':
+                    message = 'The {} dataset has been {} for {}, you can see it here: {}'.format(p.name, edit_type, org_name,  url)
+                    yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
+                elif edit_type == 'updated':
+                    message = 'The {} dataset has been {} for {}, you can see the updates here: {}'.format(p.name, edit_type, org_name,  url)
+                    yammer.messages.create(message, group_id=group_id, topics=['Dataset', edit_type])
 
 
 
