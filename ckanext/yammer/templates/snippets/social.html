@@ -2,6 +2,10 @@
 {%  set pkg_title = c.pkg_dict.title %}
 {%  set pkg_notes = c.pkg_dict.notes %}
 
+{% block styles %}
+    {% resource 'yammer/social.css' %}
+{% endblock %}
+
 {% block social %}
   <section class="module module-narrow social">
     {% block social_title %}
@@ -10,9 +14,7 @@
     {% block social_nav %}
       <ul class="nav nav-simple">
         <li class="nav-item"><a href="mailto:?Subject={{ pkg_title }}&body=Title:%20{{ pkg_title }}%0D%0A%0D%0AURL:%20%20{{ current_url }}%0D%0A%0D%0ANotes:%20{{ pkg_notes }}" target="_blank"><i class="fa fa-envelope" aria-hidden="true"> </i> Send Mail</a></li>
-        <li class="nav-item"><a class="yammer" id="yj-share-button" href="#"><i class="fa fa-bullhorn" aria-hidden="true">
-
-        </i> Yammer</a></li>
+        <li class="last-type-override nav-item"><a class="yammer" id="yj-share-button" href="#"><i class="fa fa-bullhorn" aria-hidden="true"></i> Yammer</a></li>
 
       </ul>
     {% endblock %}
