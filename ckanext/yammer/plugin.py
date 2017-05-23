@@ -96,7 +96,11 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
 
     def after_update(self, mapper, connection, instance):
         #get the package details from the mapper
-        p = package.Package().get(instance.id)
+        if db.yammer_user_table is not None:
+            p = package.Package().get(instance.id)
+        else:
+            p = None
+
         if p != None:
             edits = self.get_edit_type(p)
             org = h.get_organization(org=p.owner_org)
@@ -113,7 +117,12 @@ class YammerPlugin(plugins.SingletonPlugin, toolkit.DefaultGroupForm):
         pass
 
     def after_insert(self, mapper, connection, instance):
-        p = package.Package().get(instance.id)
+        if db.yammer_user_table is not None:
+            p = package.Package().get(instance.id)
+        else:
+            p = None
+
+
         if p is not None:
             edits = self.get_edit_type(p)
             org = h.get_organization(org=p.owner_org)
